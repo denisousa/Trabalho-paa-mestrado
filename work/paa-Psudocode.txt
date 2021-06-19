@@ -1,0 +1,44 @@
+FUNCTION assignment(literals, clauses):
+    true_clauses <- 0
+    FOR clause IN clauses:
+        IF clause[0] > 0
+            l1 <- literals[abs(clause[0])-1]
+        ELSE 
+            l1 <- NOT literals[abs(clause[0])-1]
+        
+        IF
+            l2 <- literals[abs(clause[1])-1] IF clause[1] > 0
+        ELSE 
+            l2 <- NOT literals[abs(clause[1])-1]
+        
+        IF
+            l3 <- literals[abs(clause[2])-1] IF clause[2] > 0
+        ELSE 
+            l3 <- NOT literals[abs(clause[2])-1]
+
+        r <- l1 AND l2 AND l3 
+        IF r
+            true_clauses += 1
+
+    ENDFOR
+    RETURN true_clauses
+ENDFUNCTION
+
+sat_files <- ['SAT1.txt', 'SAT2.txt', 'SAT3.txt']
+FOR sat IN sat_files:
+    dataset <- READLINES_FILE(sat)
+    range_literal, range_clause <- GET_VALUES(dataset[0])
+    clauses <- []
+    FOR line IN dataset[1:range_clause+1]:
+        clauses.append(GET_VALUES(line))
+    ENDFOR
+
+    literals_false <- GENERATE_FALSE_LIST(range_clause)
+    literals_input <- GET_VALUES(dataset[-1])
+
+    literals_false_assignment = assignment(literals_false, clauses)
+    literals_input_assignment = assignment(literals_input, clauses)
+
+    OUTPUT sat
+    OUTPUT 'literals 0: {literals_false_assignment}'
+    OUTPUT 'literals input: {literals_input_assignment} \n'
