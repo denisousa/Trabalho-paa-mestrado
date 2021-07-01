@@ -81,6 +81,7 @@ def tabu_search(initial_solution, clauses):
                     best_solution, neighborhood_values[max_index], current_value
                 ):
                     current_solution = best_solution
+                    ### current_value
                     break
                 else:
                     neighborhood_values[max_index] = 0
