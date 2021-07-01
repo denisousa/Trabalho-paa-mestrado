@@ -65,16 +65,17 @@ def tabu_search(initial_solution, clauses):
     tabu_queue = []
     count = 0
 
-    while count < 5:
+    while count < 50:
         neighborhood = generate_neighborhood(current_solution)
         neighborhood_values = [
             assignment(neighborhood[i][0], clauses) for i in range(len(neighborhood))
         ]
         max_index = neighborhood_values.index(max(neighborhood_values))
         best_solution = neighborhood[max_index]
-
-        while True:
+        visited = [False for i in range(len(neighborhood_values))]
+        while True or visited.count(False) == 0:
             # check if all elements have been visited
+            visited[max_index] = True
             if sorted(best_solution[1:3]) in tabu_queue:
                 if aspiration(
                     best_solution, neighborhood_values[max_index], current_value
@@ -96,7 +97,7 @@ def tabu_search(initial_solution, clauses):
 
 
 def main():
-    sat_file = "instance_files/test.txt"
+    sat_file = "instance_files/SAT1.txt"
 
     dataset = open(sat_file).readlines()
     range_literal, range_clause = list(
