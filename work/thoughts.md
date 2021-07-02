@@ -25,3 +25,6 @@ O que retornamos de resultado?
 100 - soluções
 delta = 1
 
+Insighits:
+Sempre que todos os valores das soluções forem iguais... Chegamos na melhor solução?
+Quantidade de vezes sem melhoria

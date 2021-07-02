@@ -1,22 +1,28 @@
 import random
 import time
 import copy
+import os
 
-nv = 3  # número de vizinhos
+nv = 100  # número de vizinhos
 tabu_size = 7  # max tamanho da fila tabu
+nmax = 5000
 
+def disturb_solution(solution): # REFATOR
+    solution_copy = copy.deepcopy(solution[0])
+    random.seed(time.time())
+    index1, index2 = sorted(random.sample(range(0, len(solution[0])), k=2)) # FIX
+    solution_copy[index1] = not solution_copy[index1]
+    solution_copy[index2] = not solution_copy[index2]
+    return solution_copy, index1, index2
 
 def generate_neighborhood(solution):
     global nv
     neighborhood = []
     while len(neighborhood) < nv:
-        neighbor = copy.deepcopy(solution[0])
-        random.seed(time.time())
-        index1, index2 = random.sample(range(0, len(solution)), k=2)
-        neighbor[index1] = not neighbor[index1]
-        neighbor[index2] = not neighbor[index2]
-        if not [True for i in neighborhood if i[0] == neighbor]:
-            neighborhood.append((neighbor, index1, index2))
+        troubled_solution, index1, index2 = disturb_solution(solution)
+        complete_solution = (troubled_solution, index1, index2)
+        if complete_solution not in neighborhood:
+            neighborhood.append(complete_solution)
 
     return neighborhood
 
@@ -45,7 +51,7 @@ def assignment(literals, clauses):
     return true_clauses
 
 
-def aspiration(best_solution, best_value, current_value):
+def aspiration(best_value, current_value):
     if best_value > current_value:
         return True
     return False
@@ -65,21 +71,19 @@ def tabu_search(initial_solution, clauses):
     tabu_queue = []
     count = 0
 
-    while count < 50:
+    while count < 5000:
         neighborhood = generate_neighborhood(current_solution)
         neighborhood_values = [
             assignment(neighborhood[i][0], clauses) for i in range(len(neighborhood))
         ]
-        max_index = neighborhood_values.index(max(neighborhood_values))
+        max_index = neighborhood_values.index(max(neighborhood_values)) # Index do melhor vizinho
         best_solution = neighborhood[max_index]
-        visited = [False for i in range(len(neighborhood_values))]
-        while True or visited.count(False) == 0:
+        while True:
             # check if all elements have been visited
-            visited[max_index] = True
+            #open('log.txt', 'a').write(f'neighborhood_values: {neighborhood_values} | count: {count} \n')
             if sorted(best_solution[1:3]) in tabu_queue:
-                if aspiration(
-                    best_solution, neighborhood_values[max_index], current_value
-                ):
+                ## TODO: change logic for accept
+                if aspiration(max(neighborhood_values), current_value):
                     current_solution = best_solution
                     ### current_value
                     break
@@ -88,9 +92,8 @@ def tabu_search(initial_solution, clauses):
                     max_index = neighborhood_values.index(max(neighborhood_values))
                     best_solution = neighborhood[max_index]
             else:
-                current_solution = best_solution
-                current_value = neighborhood_values[max_index]
-                tabu_queue = update_tabu(tabu_queue, current_solution[1:3])
+                current_value = max(neighborhood_values)
+                tabu_queue = update_tabu(tabu_queue, best_solution[1:3])
                 break
         count += 1
 
@@ -98,7 +101,9 @@ def tabu_search(initial_solution, clauses):
 
 
 def main():
-    sat_file = "instance_files/SAT1.txt"
+    open('log.txt', 'w').write('')
+    ini = time.time()
+    sat_file = os.path.abspath(f'{os.getcwd()}\\instance_files\\SAT1.txt')
 
     dataset = open(sat_file).readlines()
     range_literal, range_clause = list(
@@ -109,8 +114,9 @@ def main():
     for line in dataset[1 : range_clause + 1]:
         clauses.append(list(map(int, line.replace(" \n", "").split(" "))))
 
-    initial_solution = ([False for i in range(range_literal)], -1, -1)
+    initial_solution = ([False for _ in range(range_literal)], -1, -1) # Pq -1 -1
     print(tabu_search(initial_solution, clauses))
-
+    end = time.time()
+    print(f'time: {end - ini}')
 
 main()
