@@ -30,23 +30,8 @@ def generate_neighborhood(solution):
 def assignment(literals, clauses):
     true_clauses = 0
     for clause in clauses:
-        l1 = (
-            literals[abs(clause[0]) - 1]
-            if clause[0] > 0
-            else not literals[abs(clause[0]) - 1]
-        )
-        l2 = (
-            literals[abs(clause[1]) - 1]
-            if clause[1] > 0
-            else not literals[abs(clause[1]) - 1]
-        )
-        l3 = (
-            literals[abs(clause[2]) - 1]
-            if clause[2] > 0
-            else not literals[abs(clause[2]) - 1]
-        )
-        r = l1 and l2 and l3
-        if r:
+        literals = [literals[abs(clause_value) - 1] if clause_value > 0 else not literals[abs(clause_value) - 1] for clause_value in clause]
+        if True in literals:
             true_clauses += 1
     return true_clauses
 
@@ -103,8 +88,8 @@ def tabu_search(initial_solution, clauses):
 def main():
     open('log.txt', 'w').write('')
     ini = time.time()
-    sat_file = os.path.abspath(f'{os.getcwd()}\\instance_files\\SAT1.txt')
-
+    # sat_file = os.path.abspath(f'{os.getcwd()}\\instance_files\\test5.txt')
+    sat_file = 'C:\\Users\\SousaDen\\Documents\\Trabalho-paa-mestrado\\instance_files\\test3.txt'
     dataset = open(sat_file).readlines()
     range_literal, range_clause = list(
         map(int, dataset[0].replace(" \n", "").split(" "))
