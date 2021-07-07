@@ -3,6 +3,7 @@ import copy
 from configuration import sat_file, nmax
 from neighborhood import generate_diversification, generate_neighborhood
 from utils import update_tabu, aspiration, assignment
+from random import choice
 
 
 def tabu_search(initial_solution, clauses, range_literal):
@@ -10,12 +11,13 @@ def tabu_search(initial_solution, clauses, range_literal):
     current_solution = copy.deepcopy(initial_solution)
     current_value = assignment(current_solution[0], clauses)
     tabu_queue = []
-    count = 0
+    count = 1
     count_repetitive_solution = 0
     previous_value = 0
-    M = 0
+    M = 1
 
     while (count - M) < nmax:
+    # while 100:
         neighborhood = (
             generate_neighborhood(current_solution, range_literal)
             if count_repetitive_solution < 50
@@ -80,7 +82,7 @@ def main():
     for line in dataset[1 : range_clause + 1]:
         clauses.append(list(map(int, line.replace(" \n", "").split(" "))))
 
-    initial_solution = ([False for _ in range(range_literal)], -1, -1)
+    initial_solution = ([choice([True, False]) for _ in range(range_literal)], -1, -1)
     print(tabu_search(initial_solution, clauses, range_literal))
     end = time.time()
     print(f"time: {end - ini}")

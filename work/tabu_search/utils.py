@@ -27,7 +27,3 @@ def assignment(literals, clauses):
         if True in literals_result:
             true_clauses += 1
     return true_clauses
-
-
-def generate_sample(n, solution):
-    solution
