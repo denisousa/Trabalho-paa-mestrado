@@ -1,3 +1,4 @@
+# Ideias
 1 - S0: lista com todos os valores falsos
 2 - Gera os vizinhos
   NV: 100
@@ -25,6 +26,26 @@ O que retornamos de resultado?
 100 - soluções
 delta = 1
 
-Insighits:
+Insights:
 Sempre que todos os valores das soluções forem iguais... Chegamos na melhor solução?
 Quantidade de vezes sem melhoria
+
+# Inferências da leitura do artigo original (Glover 1998)
+
+## Intensificação
+  Modificar as regras de escolha combinando atributos de soluções historicamente boas ou voltar a uma solução e explorar mais os vizinhos.
+
+  Foca em examinar vizinhos de soluções elites. 
+
+
+### Ideias
+  - ter um histórico de soluções que chegam próximo do perfeito (SAT) e combiná-las -> "Conjunto elite"
+  - armazenar a solução mais próxima do ótimo e, quando o algoritmo "enganchar", buscar os vizinhos dele (alterando apenas uma posição) -> para isso, devemos considerar uma quantidade de vizinhos inferior a nv
+
+## Diversificação
+  Busca em regiões não exploradas, ou seja, soluções significativamente diferentes das já exploradas.
+
+### Exemplos
+  - mudar regra de escolha
+  - reiniciar -> inicia pela melhor solução encontrada durante a busca, com um meio de evitar retornar para a mesma
+  
